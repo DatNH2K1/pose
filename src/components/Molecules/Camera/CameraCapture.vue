@@ -4,8 +4,6 @@ import type { Resolution } from "@/definitions/types.ts";
 import {useDrawStore} from "@/provides/draw.ts";
 
 const DEFAULT = {
-  minVideoWidth: 480,
-  minVideoHeight: 480,
   maxVideoWidth: window.innerWidth,
   maxVideoHeight: window.innerHeight,
   width: 800,
@@ -50,18 +48,16 @@ const setupCamera = async (mode: string | null = null, options : Resolution | nu
   stopCamera();
 
   const facingMode = mode || DEFAULT.facingMode
-  const videoWidth = options ? options.width : DEFAULT.width;
-  const videoHeight = options ? options.height : DEFAULT.height;
+  const videoWidth = (options ? options.width : DEFAULT.width) || 800;
+  const videoHeight = (options ? options.height : DEFAULT.height) || 600;
 
   videoOption.value = {
     facingMode: facingMode,
     width: {
-      min: DEFAULT.minVideoWidth,
       ideal: videoWidth,
       max: DEFAULT.maxVideoWidth
     },
     height: {
-      min: DEFAULT.minVideoHeight,
       ideal: videoHeight,
       max: DEFAULT.maxVideoHeight
     }
