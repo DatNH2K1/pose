@@ -2,6 +2,7 @@
 import {CameraPreviewProps} from "@/definitions/props.ts";
 import {ref} from "vue";
 
+//@ts-ignore
 const props = withDefaults(defineProps<CameraPreviewProps>(), {
   alt: '',
   src: ''
@@ -30,7 +31,7 @@ const onImageLoad = () => {
 <template>
   <div class="flex justify-center items-center w-screen h-screen bg-black">
     <div class="relative w-fit">
-      <img ref="image" :src="src" :alt="alt" class="max-w-full max-h-full" @load="onImageLoad">
+      <img ref="image" :src="props.src" :alt="props.alt" class="max-w-full max-h-full" @load="onImageLoad">
       <canvas ref="canvas" class="absolute left-0 top-0 pointer-events-none w-full h-full"/>
     </div>
   </div>

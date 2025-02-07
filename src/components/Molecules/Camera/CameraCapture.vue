@@ -38,7 +38,7 @@ const videoOption = ref<MediaTrackConstraints>();
 const emits = defineEmits<{
   (e: 'camera-ready', resolution: Resolution, captureSize: Resolution): void;
   (e: 'no-camera', err: any): void;
-  (e: 'camera-loading', err: any): void;
+  (e: 'camera-loading'): void;
 }>();
 
 /**
@@ -266,10 +266,10 @@ const changeCamera = () => {
 }
 
 const resizeVideo = () => {
-  if (!container.value) return;
+  if (!container.value || !videoOption.value) return;
 
-  let width = videoOption.value.width.ideal ?? window.innerWidth;
-  let height = videoOption.value.height.ideal ?? window.innerHeight;
+  let width = (videoOption.value.width as { ideal: number })?.ideal ?? window.innerWidth;
+  let height = (videoOption.value.height as { ideal: number })?.ideal ?? window.innerHeight;
 
   if (width / height > aspectRatio.value) {
     width = height * aspectRatio.value;

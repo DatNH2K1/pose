@@ -20,7 +20,7 @@ const capture = ref<InstanceType<typeof CameraCapture> | null>(null);
 const imageData = ref<ImageData>(defaultImageData);
 
 const emits = defineEmits<{
-  (e: 'camera-capture', imageData: ImageData)
+  (e: 'camera-capture', imageData: ImageData): void
 }>()
 
 onMounted(() => {
