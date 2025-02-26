@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import {CameraActionsProps} from "@/definitions/props.ts";
-import {ButtonStyle, ComButton, ModalPosition} from "modable";
+import {ButtonStyle, ComButton} from "modable";
+import {onClickOutside} from "@vueuse/core";
 import {Side} from "@/definitions/enums.ts";
-import {isMobileOrTablet} from "@/utils/device.ts";
-import Modal from "@/components/Atoms/Modal/Modal.vue";
 import {computed, ref} from "vue";
 import {useDrawStore} from "@/provides/draw.ts";
+import {getFlexDirectionActionClass, getFlexDirectionButtonGroupClass} from "@/utils/style.ts";
+import {useCameraActions} from "@/logic/Camera/cameraActions.ts";
+import {isMobileOrTablet} from "@/utils/device.ts";
 
 const drawStore = useDrawStore();
 
@@ -21,28 +23,23 @@ const emits = defineEmits<{
   (e: 'remove-picture'): void;
 }>();
 
-const openModal = ref(false);
+const {
+  openModal,
+  menuSelected,
+  prepareCapture,
+  onTriggerModal,
+  clickMenuItem,
+  clickOutSideMenu
+} = useCameraActions();
 
-const getFlexDirectionClass = (side: string) => {
-  switch (side) {
-    case Side.LEFT:
-      return 'flex-row';
-    case Side.RIGHT:
-      return 'flex-row-reverse';
-    case Side.TOP:
-      return 'flex-col';
-    case Side.BOTTOM:
-      return 'flex-col-reverse';
-    default:
-      return '';
-  }
-};
+const menuButtonRef = ref(null);
 
 const cameraChange = () => {
   emits('camera-change');
 }
 
-const cameraCapture = () => {
+const cameraCapture = async () => {
+  await prepareCapture();
   emits('camera-capture');
 }
 
@@ -53,7 +50,7 @@ const removePicture = () => {
 const mainButtons = computed(() => {
   return [
     {
-      click: () => openModal.value = !openModal.value,
+      click: onTriggerModal,
       icon: 'fas fa-bars',
       hide: false,
     },
@@ -61,18 +58,19 @@ const mainButtons = computed(() => {
       click: cameraCapture,
       icon: 'fas fa-camera',
       hide: props.hasPicture,
-      disabled: props.cameraError
+      disabled: props.cameraError || openModal.value || drawStore.state.displayTimer
     },
     {
       click: removePicture,
       icon: 'fas fa-times',
-      hide: !props.hasPicture
+      hide: !props.hasPicture,
+      disabled: openModal.value
     },
     {
       click: cameraChange,
       icon: 'fa fa-sync-alt',
       hide: false,
-      disabled: !isMobileOrTablet()
+      disabled: !isMobileOrTablet() || openModal.value
     }
   ];
 });
@@ -80,25 +78,45 @@ const mainButtons = computed(() => {
 const menuButtons = computed(() => {
   return [
     {
-      click: () => {
-        drawStore.mutations.nextGridValue()
+      click: (option: number) => {
+        menuSelected.value = undefined;
+        drawStore.mutations.setGridValue(option)
       },
       icon: 'fas fa-th',
-      label: drawStore.state.gridValue === 0 ? 'OFF' : (drawStore.state.gridValue + 'x' + drawStore.state.gridValue)
+      options: drawStore.state.gridValueOptions,
+      active: drawStore.state.gridValue !== 0
+    },
+    {
+      click: (option: number) => {
+        menuSelected.value = undefined;
+        drawStore.mutations.setTimer(option)
+      },
+      icon: 'fas fa-clock',
+      options: drawStore.state.timerValueOptions,
+      active: drawStore.state.timer !== 0
     }
-  ];
-}) ;
+  ].map((item, index) => {
+    return {
+      ... item,
+      label: item.options.filter(item => item.selected)[0]?.label ?? 'None',
+      selected: index === menuSelected.value
+    }
+  });
+});
+
+onClickOutside(menuButtonRef, clickOutSideMenu)
 </script>
 
 <template>
-  <div :class="[
-      'flex',
-      getFlexDirectionClass(props.side)
-  ]">
-    <div :class="[
-        'flex items-center justify-center gap-2 lg:gap-4 xl:gap-8 p-3',
-        ['left', 'right'].includes(props.side) ? 'flex-col' : 'flex-rol'
-    ]">
+  <div
+      class="cameraActions flex"
+      :class="getFlexDirectionActionClass(props.side)"
+  >
+    <!-- Main Buttons -->
+    <div
+        class="flex items-center justify-center gap-2 lg:gap-4 xl:gap-8 p-3"
+        :class="getFlexDirectionButtonGroupClass(props.side)"
+    >
       <template
           v-for="button in mainButtons"
       >
@@ -113,26 +131,45 @@ const menuButtons = computed(() => {
         </ComButton>
       </template>
     </div>
-    <Modal
-        :visible="openModal"
-        :position="ModalPosition.CENTER"
-        @clicked-outside="() => openModal = false"
-    >
-      <div class="flex flex-wrap bg-gray-900 bg-opacity-75 rounded shadow p-12 xl:p-20 gap-2 lg:gap-4 xl:gap-8">
-        <div
-            v-for="button in menuButtons"
-            class="flex flex-col"
-        >
-          <ComButton
-              class="comButton--camera"
-              :type="ButtonStyle.CUSTOM"
-              @click="button.click"
+
+    <!-- Menu Buttons -->
+    <div class="max-w-screen max-h-screen overflow-hidden flex justify-center items-center">
+      <Transition name="bounce">
+          <div
+              v-if="openModal"
+              ref="menuButtonRef"
+              class="cameraActions__menu flex bg-gray-900 bg-opacity-75 rounded shadow py-2 px-1 xl:py-20 xl:px-14 gap-2 lg:gap-4 xl:gap-8"
+              :class="getFlexDirectionButtonGroupClass(props.side)"
           >
-            <i :class="button.icon"></i>
-          </ComButton>
-          <label class="text-center text-white font-bold mt-3">{{ button.label }}</label>
-        </div>
-      </div>
-    </Modal>
+            <template
+                v-for="(button, index) in menuButtons"
+            >
+              <template v-if="button.selected">
+                <div
+                    v-for="option in button.options"
+                    class="cameraActions__menu__item"
+                    :class="[option.selected ? 'cameraActions__menu__item--active' : '']"
+                >
+                  <label
+                      class="text-center font-bold"
+                      @click="button.click(option.value)"
+                  >
+                    {{ option.label }}
+                  </label>
+                </div>
+              </template>
+              <div
+                  v-else-if="menuSelected === undefined"
+                  class="cameraActions__menu__item"
+                  :class="[button.active ? 'cameraActions__menu__item--active' : '']"
+                  @click="clickMenuItem(index)"
+              >
+                <i :class="button.icon"></i>
+                <label class="text-center font-bold">{{ button.label }}</label>
+              </div>
+            </template>
+          </div>
+      </Transition>
+    </div>
   </div>
 </template>

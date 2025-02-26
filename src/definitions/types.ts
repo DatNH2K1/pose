@@ -8,3 +8,9 @@ export type ImageData = {
     width: number,
     height: number
 }
+
+export type Option<T> = {
+    label: string,
+    value: T,
+    selected?: boolean
+}

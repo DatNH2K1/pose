@@ -6,6 +6,10 @@ export type CameraActionsProps = {
     cameraError: boolean,
 };
 
+export type CameraCaptureProps = {
+    getOverlayCanvas: () => HTMLCanvasElement | null;
+};
+
 export type CameraPreviewProps = {
     src: string,
     alt: string

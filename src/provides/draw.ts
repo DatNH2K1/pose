@@ -1,47 +1,114 @@
-import {reactive, provide, inject} from "vue";
-import {drawGrid} from "@/provides/actions/draw.ts";
+import {reactive, watch, provide, inject} from "vue";
+import {drawGrid, drawCountdown} from "@/provides/actions/draw.ts";
+import {Option, Resolution} from "@/definitions/types.ts";
 
 interface DrawStore {
     state: {
         gridValue: number,
-        gridRatio: number,
-        videoResolution: {
-            width: number,
-            height: number
-        }
+        timer: number,
+        displayTimer: boolean,
+        timeCounter: number,
+        gridValueOptions: Option<number>[],
+        timerValueOptions: Option<number>[],
+        videoResolution: Resolution,
+        flash: boolean,
     },
     mutations: {
-        nextGridValue: () => void
+        setGridValue: (gridValue: number) => void,
+        setTimer: (timer: number) => void,
+        setDisplayTimer: (displayTimer: boolean) => void,
+        resetTimeCounter: () => void,
+        decreaseTimeCounter: () => void,
+        showFlash: () => void,
     },
     actions: {
-        drawGrid: (canvas: HTMLCanvasElement, size: number, gridRatio: number) => void
+        drawGrid: (canvas: HTMLCanvasElement, size: number, gridRatio: number) => void,
+        drawCountdown: (canvas: HTMLCanvasElement, countdown: number, gridRatio: number) => void
     },
 }
 
-const gridValues = [0, 6, 12, 24];
+export const gridRatio = 10;
+export const gridValues = [0, 6, 12, 24];
+export const timerValues = [0, 5, 10, 15];
 
 // Define state, mutations, and actions
 export const createDrawStore = (): DrawStore => {
     // State
     const state = reactive({
         gridValue: 0,
-        gridRatio: 10,
+        timer: 0,
+        displayTimer: false,
+        timeCounter: 0,
+        gridValueOptions: gridValues.map(item => {
+            return {
+                label: item === 0 ? 'OFF' : (item + " x " + item),
+                value: item,
+                selected: item === 0
+            }
+        }),
+        timerValueOptions: timerValues.map(item => {
+            return {
+                label: item === 0 ? 'OFF' : (item + " s"),
+                value: item,
+                selected: item === 0
+            }
+        }),
         videoResolution: {
             width: window.innerWidth,
             height: window.innerHeight
-        }
+        },
+        flash: false
     });
+
+    watch(() => state.gridValue, (value) => {
+        state.gridValueOptions = gridValues.map(item => {
+            return {
+                label: item === 0 ? 'OFF' : (item + " x " + item),
+                value: item,
+                selected: item === value
+            }
+        })
+    })
+
+    watch(() => state.timer, (value) => {
+        state.timerValueOptions = timerValues.map(item => {
+            return {
+                label: item === 0 ? 'OFF' : (item + " s"),
+                    value: item,
+                selected: item === value
+            }
+        })
+    })
 
     // Mutations
     const mutations = {
-        nextGridValue: () =>{
-            state.gridValue = gridValues[(gridValues.indexOf(state.gridValue) + 1) % gridValues.length]
+        setGridValue: (gridValue: number) =>{
+            state.gridValue = gridValue
+        },
+        setTimer: (timer: number) => {
+            state.timer = timer
+        },
+        setDisplayTimer: (displayTimer: boolean) => {
+            state.displayTimer = displayTimer
+        },
+        resetTimeCounter: () => {
+            state.timeCounter = state.timer
+        },
+        decreaseTimeCounter: () => {
+            state.timeCounter -= 1;
+        },
+        showFlash: () => {
+            state.flash = true;
+            setTimeout(() => {
+                state.flash = false
+            }, 100);
         }
     };
 
     // Actions
     const actions = {
-        drawGrid
+        drawGrid,
+        drawCountdown
     };
 
     return { state, mutations, actions };

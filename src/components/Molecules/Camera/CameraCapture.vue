@@ -1,37 +1,36 @@
 <script setup lang="ts">
-import {reactive, ref, onMounted, onUnmounted} from "vue";
+import {ref, onMounted, onUnmounted} from "vue";
 import type { Resolution } from "@/definitions/types.ts";
 import {useDrawStore} from "@/provides/draw.ts";
-
-const DEFAULT = {
-  maxVideoWidth: window.innerWidth,
-  maxVideoHeight: window.innerHeight,
-  width: 800,
-  height: 600,
-  facingMode: 'environment',
-  jpegQuality: 1
-}
+import {DEFAULT, useCameraCapture} from "@/logic/Camera/cameraCapture.ts";
 
 const drawStore = useDrawStore();
 
-const videoResolution = reactive<Resolution>({
-  width: DEFAULT.width,
-  height: DEFAULT.height
-})
-const captureSize = reactive<Resolution>({
-  width: DEFAULT.width,
-  height: DEFAULT.height
-})
-const cameraMode = ref('environment');
-const cameraSwitching = ref(false);
-const videoEnabled = ref<boolean>(false)
+/**
+ * Get the Canvas for overlay
+ */
+const getOverlayCanvas = () => {
+  return overlay.value;
+}
+
+const {
+  cameraMode,
+  videoOption,
+  videoResolution,
+  aspectRatio,
+  captureSize,
+  videoEnabled,
+  cameraSwitching,
+  isVideoEnabled,
+  isCameraSwitching,
+  changeVideoOverlay
+} = useCameraCapture({
+  getOverlayCanvas
+});
+
 const video = ref<HTMLVideoElement | null>(null)
 const overlay = ref<HTMLCanvasElement | null>(null)
-const isOverlayEnabled = ref(false)
-const lastAnimationRequest = ref<number | null>(null)
 const container = ref<HTMLElement>();
-const aspectRatio = ref(1);
-const videoOption = ref<MediaTrackConstraints>();
 
 const emits = defineEmits<{
   (e: 'camera-ready', resolution: Resolution, captureSize: Resolution): void;
@@ -156,86 +155,6 @@ const captureImage = () => {
     imageUrl: captureCanvas.toDataURL('image/jpeg', DEFAULT.jpegQuality),
     width: captureCanvas.width,
     height: captureCanvas.height
-  }
-}
-
-const isVideoEnabled = () => {
-  return videoEnabled.value
-}
-
-const isCameraSwitching = () => {
-  return cameraSwitching.value
-}
-
-/**
- * Get the Canvas for overlay
- */
-const getOverlayCanvas = () => {
-  return overlay.value;
-}
-
-/**
- * Draws an image to overlay on the video display.
- * All drawn content is cleared and redrawn each time.
- *
- * Called from requestAnimationFrame() and always executed while this.isOverlayEnabled = true
- */
-const drawVideoOverlay = () => {
-  lastAnimationRequest.value = null
-
-  if (!isOverlayEnabled.value) {
-    return
-  }
-
-  if (!isVideoEnabled()) {
-    triggerDrawVideoOverlay()
-  }
-
-  const overlay = getOverlayCanvas();
-  if (overlay === null) {
-    throw Error('Not found canvas video overlay')
-  }
-
-  const context = overlay.getContext('2d');
-  if (context === null) {
-    throw Error('Not found canvas video overlay context')
-  }
-  context.clearRect(0, 0, overlay.width, overlay.height)
-
-  let guideOffset = 0
-  if (drawStore.state.gridValue !== 0) {
-    guideOffset = drawStore.state.gridRatio
-  }
-
-  drawStore.actions.drawGrid(overlay, drawStore.state.gridValue, guideOffset)
-
-  triggerDrawVideoOverlay()
-}
-
-const changeVideoOverlay = (isEnable: boolean) => {
-  if (isEnable) {
-    if (isOverlayEnabled.value) {
-      return
-    }
-    isOverlayEnabled.value = true
-    triggerDrawVideoOverlay()
-  } else {
-    isOverlayEnabled.value = false
-    if (lastAnimationRequest.value !== null) {
-      cancelAnimationFrame(lastAnimationRequest.value)
-      lastAnimationRequest.value = null
-    }
-  }
-}
-
-/**
- * Start drawing
- */
-const triggerDrawVideoOverlay = () => {
-  if (lastAnimationRequest.value === null) {
-    lastAnimationRequest.value = requestAnimationFrame(drawVideoOverlay)
-  } else {
-    console.warn('drawVideoOverlay is scheduled. ignore request')
   }
 }
 

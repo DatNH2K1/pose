@@ -1,4 +1,7 @@
-@use "modable/index";
+@use "keyframes";
+@use "animation";
+@use "modable/index" as modable;
+@use "components/index" as components;
 
 @tailwind base;
 @tailwind components;

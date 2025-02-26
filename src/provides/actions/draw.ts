@@ -3,16 +3,16 @@ const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M
 export const drawGrid = (canvas: HTMLCanvasElement, size: number, gridRatio: number) => {
     if (size === 0) return
     // handle grid drawing on the canvas
-    var ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d')
     if (!ctx) {
         throw Error('Unable to get 2d context');
     }
-    var row = size
-    var col = size
-    var w = (canvas.width - gridRatio) / col
-    var h = (canvas.height - gridRatio) / row
-    var x = 0
-    var y = 0
+    const row = size
+    const col = size
+    const w = (canvas.width - gridRatio) / col
+    const h = (canvas.height - gridRatio) / row
+    let x = 0
+    let y = 0
     for (x = 0; x < row; x++) {
         for (y = 0; y < col; y++) {
             ctx.strokeStyle = 'rgba(255,255,255,0.5)'
@@ -30,4 +30,18 @@ export const drawGrid = (canvas: HTMLCanvasElement, size: number, gridRatio: num
     for (y = 1; y < col; y++) {
         ctx.fillText(alphabet[y - 1], 0, h * y - 2)
     }
+}
+
+export const drawCountdown = (canvas: HTMLCanvasElement, countdown: number) => {
+    const ctx = canvas.getContext('2d')
+    if (!ctx) {
+        throw Error('Unable to get 2d context');
+    }
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 100px Arial';
+    ctx.fillText(countdown.toString(), canvas.width / 2, canvas.height / 2);
 }
