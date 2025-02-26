@@ -1,3 +1,7 @@
+import {NotificationStore} from "modable";
+
+export type Notification = typeof NotificationStore;
+
 export type Resolution = {
     width: number,
     height: number

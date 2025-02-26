@@ -8,8 +8,10 @@ import {useDrawStore} from "@/provides/draw.ts";
 import {getFlexDirectionActionClass, getFlexDirectionButtonGroupClass} from "@/utils/style.ts";
 import {useCameraActions} from "@/logic/Camera/cameraActions.ts";
 import {isMobileOrTablet} from "@/utils/device.ts";
+import {useI18n} from "vue-i18n";
 
 const drawStore = useDrawStore();
+const {t} = useI18n();
 
 const props = withDefaults(defineProps<CameraActionsProps>(), {
   side: Side.RIGHT,
@@ -120,7 +122,7 @@ const menuButtons = computed(() => {
 
     return {
       ... item,
-      label: optionSelected?.label ?? 'None',
+      label: optionSelected?.label ?? t('label.none'),
       selected: index === menuSelected.value,
       value: optionSelected?.value
     }

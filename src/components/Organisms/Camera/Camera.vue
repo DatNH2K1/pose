@@ -51,7 +51,9 @@ const onCameraChange = () => {
 const onCameraCapture = () => {
   if (capture.value) {
     localImageData.value = capture.value.captureImage()
-    emits('camera-capture', props.mode, localImageData.value)
+    if (props.mode) {
+      emits('camera-capture', props.mode, localImageData.value)
+    }
 
     if (props.autoStopCamera) {
       capture.value.stopRecording();
