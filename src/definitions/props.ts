@@ -1,8 +1,9 @@
-import type {Side} from "@/definitions/enums.ts";
+import {Mode, Side} from "@/definitions/enums.ts";
 import {ImageData} from "@/definitions/types.ts";
 
 export type CameraProps = {
-    imageData?: ImageData | undefined;
+    mode?: Mode,
+    imageData?: ImageData;
     autoStopCamera?: boolean,
 };
 

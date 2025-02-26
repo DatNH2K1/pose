@@ -2,7 +2,7 @@
 import {onMounted, ref, watch} from "vue";
 import CameraCapture from "@/components/Molecules/Camera/CameraCapture.vue";
 import CameraActions from "@/components/Molecules/Camera/CameraActions.vue";
-import {Side} from "@/definitions/enums.ts";
+import {Mode, Side} from "@/definitions/enums.ts";
 import {ImageData} from "@/definitions/types.ts";
 import CameraPreview from "@/components/Atoms/Camera/CameraPreview.vue";
 import Modal from "@/components/Atoms/Modal/Modal.vue";
@@ -10,6 +10,7 @@ import {ModalPosition} from "modable"
 import {CameraProps} from "@/definitions/props.ts";
 
 const props = withDefaults(defineProps<CameraProps>(), {
+  mode: undefined,
   imageData: undefined,
   autoStopCamera: false,
 });
@@ -20,8 +21,8 @@ const capture = ref<InstanceType<typeof CameraCapture> | null>(null);
 const localImageData = ref<ImageData | undefined>(props.imageData);
 
 const emits = defineEmits<{
-  (e: 'camera-capture', imageData: ImageData): void,
-  (e: 'remove-picture', imageData: ImageData): void
+  (e: 'camera-capture', mode: Mode, imageData: ImageData): void,
+  (e: 'remove-picture', mode: Mode): void
 }>()
 
 onMounted(() => {
@@ -50,7 +51,7 @@ const onCameraChange = () => {
 const onCameraCapture = () => {
   if (capture.value) {
     localImageData.value = capture.value.captureImage()
-    emits('camera-capture', localImageData.value)
+    emits('camera-capture', props.mode, localImageData.value)
 
     if (props.autoStopCamera) {
       capture.value.stopRecording();
@@ -60,7 +61,9 @@ const onCameraCapture = () => {
 
 const onRemovePicture = () => {
   if (capture.value) {
-    emits('remove-picture', localImageData.value)
+    if (props.mode) {
+      emits('remove-picture', props.mode)
+    }
 
     localImageData.value = undefined
 

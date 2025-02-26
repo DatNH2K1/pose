@@ -14,3 +14,8 @@ export type Option<T> = {
     value: T,
     selected?: boolean
 }
+
+export type ModeSetting = {
+    title: string,
+    poses: string[]
+}

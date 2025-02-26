@@ -4,3 +4,7 @@ export enum Side {
     RIGHT = 'right',
     LEFT = 'left'
 }
+
+export enum Mode {
+    BASIC = 'basic'
+}
