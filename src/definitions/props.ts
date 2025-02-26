@@ -1,4 +1,10 @@
 import type {Side} from "@/definitions/enums.ts";
+import {ImageData} from "@/definitions/types.ts";
+
+export type CameraProps = {
+    imageData?: ImageData | undefined;
+    autoStopCamera?: boolean,
+};
 
 export type CameraActionsProps = {
     side: Side;
@@ -11,6 +17,6 @@ export type CameraCaptureProps = {
 };
 
 export type CameraPreviewProps = {
-    src: string,
+    src: string | undefined,
     alt: string
 }

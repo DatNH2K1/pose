@@ -21,6 +21,8 @@ const emits = defineEmits<{
   (e: 'camera-change'): void;
   (e: 'camera-capture'): void;
   (e: 'remove-picture'): void;
+  (e: 'show-info'): void;
+  (e: 'show-modes'): void;
 }>();
 
 const {
@@ -47,11 +49,24 @@ const removePicture = () => {
   emits('remove-picture');
 }
 
+const showInfo = () => {
+  emits('show-info');
+}
+
+const showModes = () => {
+  emits('show-modes');
+}
+
 const mainButtons = computed(() => {
   return [
     {
       click: onTriggerModal,
       icon: 'fas fa-bars',
+      hide: false,
+    },
+    {
+      click: showModes,
+      icon: 'fas fa-images',
       hide: false,
     },
     {
@@ -71,7 +86,12 @@ const mainButtons = computed(() => {
       icon: 'fa fa-sync-alt',
       hide: false,
       disabled: !isMobileOrTablet() || openModal.value
-    }
+    },
+    {
+      click: showInfo,
+      icon: 'fas fa-info',
+      hide: false,
+    },
   ];
 });
 
@@ -96,10 +116,13 @@ const menuButtons = computed(() => {
       active: drawStore.state.timer !== 0
     }
   ].map((item, index) => {
+    const optionSelected = item.options.filter(item => item.selected)[0];
+
     return {
       ... item,
-      label: item.options.filter(item => item.selected)[0]?.label ?? 'None',
-      selected: index === menuSelected.value
+      label: optionSelected?.label ?? 'None',
+      selected: index === menuSelected.value,
+      value: optionSelected?.value
     }
   });
 });

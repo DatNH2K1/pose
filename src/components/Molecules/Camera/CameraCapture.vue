@@ -196,6 +196,12 @@ const resizeVideo = () => {
   container.value.style.height = `${height}px`;
 };
 
+const orientationChange = () => {
+  loadRecording().finally(() => {
+    resizeVideo()
+  })
+}
+
 defineExpose({
   loadRecording,
   stopRecording,
@@ -209,10 +215,12 @@ defineExpose({
 
 onMounted(() => {
   window.addEventListener("resize", resizeVideo);
+  window.addEventListener("orientationchange", orientationChange);
 });
 
 onUnmounted(() => {
   window.removeEventListener("resize", resizeVideo);
+  window.removeEventListener("orientationchange", orientationChange)
 });
 </script>
 
