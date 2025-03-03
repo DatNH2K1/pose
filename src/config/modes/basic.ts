@@ -1,5 +1,4 @@
 import {BasePoseSetting, DetailedPoseSetting, ModeSetting} from "@/definitions/types.ts";
-import {translate} from "@/plugins/i18n.ts";
 import {Pose} from "@/definitions/enums.ts";
 
 const frontSetting: BasePoseSetting = {
@@ -38,7 +37,8 @@ const config: ModeSetting = {
     ].map(item => {
         return {
             ... item,
-            label: translate(`pose.${item.type}.label`)
+            label: `pose.${item.type}.label`,
+            description: `pose.${item.type}.description`
         } as DetailedPoseSetting
     })
 }

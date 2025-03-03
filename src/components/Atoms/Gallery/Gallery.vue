@@ -24,6 +24,10 @@ const currentData = computed(() => {
   return props.imageData[currentPose.value]
 })
 
+const poseCompleted = computed(() => {
+  return Object.keys(props.imageData)
+})
+
 watch([
   () => props.pose
 ], () => {
@@ -57,7 +61,7 @@ const loadPoseData = () => {
             :class="isHorizontal ? '' : 'w-full'"
             @click="loadPoseData"
         >
-          {{ currentSetting?.label }}
+          {{ $t(currentSetting?.label) }}
           <img
               v-if="currentData"
               alt="Pose Data"
@@ -73,9 +77,13 @@ const loadPoseData = () => {
           >
             <div
                 class="gallery__item gallery__item--label"
+                :class="[
+                    poseCompleted.includes(pose.type) ? 'text-green-500 border-green-500' : '',
+                    pose.type === currentPose ? 'text-blue-500 border-blue-500' : ''
+                ]"
                 @click="selectPose(pose.type)"
             >
-              {{ pose.label }}
+              {{ $t(pose.label) }}
             </div>
           </template>
         </div>

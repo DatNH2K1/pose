@@ -26,6 +26,7 @@ export type BasePoseSetting = {
 
 export type DetailedPoseSetting = BasePoseSetting & {
     label: string,
+    description: string,
 }
 
 export type PoseData = {

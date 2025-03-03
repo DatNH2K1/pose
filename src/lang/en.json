@@ -2,26 +2,33 @@
   "label": {
     "off": "OFF",
     "none": "None",
-    "gallery": "Gallery"
+    "gallery": "Gallery",
+    "info": "Info"
   },
   "pose": {
     "front": {
-      "label": "Front"
+      "label": "Front",
+      "description": "Description"
     },
     "leftSide": {
-      "label": "Left Side"
+      "label": "Left Side",
+      "description": "Description"
     },
     "rightSide": {
-      "label": "Right Side"
+      "label": "Right Side",
+      "description": "Description"
     },
     "leftSit": {
-      "label": "Left Sit"
+      "label": "Left Sit",
+      "description": "Description"
     },
     "rightSit": {
-      "label": "Right Sit"
+      "label": "Right Sit",
+      "description": "Description"
     },
     "back": {
-      "label": "Back"
+      "label": "Back",
+      "description": "Description"
     }
   }
 }
