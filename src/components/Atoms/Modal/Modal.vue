@@ -2,7 +2,9 @@
 import { ref, watch, defineEmits } from "vue";
 import {ModalProps, ModalPosition} from "modable";
 
-const props = defineProps<ModalProps>();
+const props = defineProps<ModalProps & {
+  transaction?: string
+}>();
 const emit = defineEmits(["clicked-outside"]);
 
 const isShow = ref(props.visible);
@@ -20,7 +22,7 @@ const handleBackgroundClick = (event: MouseEvent) => {
 
 <template>
   <Teleport to="body">
-    <Transition name="modalTransition">
+    <Transition :name="props.transaction ?? 'modalTransition'">
       <div v-if="isShow"
            class="comModal"
            @click="handleBackgroundClick"

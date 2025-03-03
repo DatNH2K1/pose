@@ -19,7 +19,15 @@ export type Option<T> = {
     selected?: boolean
 }
 
+export type BasePoseSetting = {
+    type: string,
+}
+
+export type DetailedPoseSetting = BasePoseSetting & {
+    label: string,
+}
+
 export type ModeSetting = {
     title: string,
-    poses: string[]
+    poses: DetailedPoseSetting[]
 }

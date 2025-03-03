@@ -8,10 +8,9 @@ import {useDrawStore} from "@/provides/draw.ts";
 import {getFlexDirectionActionClass, getFlexDirectionButtonGroupClass} from "@/utils/style.ts";
 import {useCameraActions} from "@/logic/Camera/cameraActions.ts";
 import {isMobileOrTablet} from "@/utils/device.ts";
-import {useI18n} from "vue-i18n";
+import {translate} from "@/plugins/i18n.ts";
 
 const drawStore = useDrawStore();
-const {t} = useI18n();
 
 const props = withDefaults(defineProps<CameraActionsProps>(), {
   side: Side.RIGHT,
@@ -122,7 +121,7 @@ const menuButtons = computed(() => {
 
     return {
       ... item,
-      label: optionSelected?.label ?? t('label.none'),
+      label: optionSelected?.label ?? translate('label.none'),
       selected: index === menuSelected.value,
       value: optionSelected?.value
     }
@@ -147,7 +146,7 @@ onClickOutside(menuButtonRef, clickOutSideMenu)
       >
         <ComButton
             v-if="!button.hide"
-            class="comButton--camera"
+            class="comButton--camera comButton--custom"
             :type="ButtonStyle.CUSTOM"
             @click="button.click"
             :disabled="button.disabled"
@@ -163,7 +162,7 @@ onClickOutside(menuButtonRef, clickOutSideMenu)
           <div
               v-if="openModal"
               ref="menuButtonRef"
-              class="cameraActions__menu flex bg-gray-900 bg-opacity-75 rounded shadow py-2 px-1 xl:py-20 xl:px-14 gap-2 lg:gap-4 xl:gap-8"
+              class="cameraActions__menu flex  bg-opacity-75 rounded shadow py-2 px-1 xl:py-20 xl:px-14 gap-2 lg:gap-4 xl:gap-8"
               :class="getFlexDirectionButtonGroupClass(props.side)"
           >
             <template

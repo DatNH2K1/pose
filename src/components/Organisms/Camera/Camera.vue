@@ -22,7 +22,9 @@ const localImageData = ref<ImageData | undefined>(props.imageData);
 
 const emits = defineEmits<{
   (e: 'camera-capture', mode: Mode, imageData: ImageData): void,
-  (e: 'remove-picture', mode: Mode): void
+  (e: 'remove-picture', mode: Mode): void,
+  (e: 'show-info'): void,
+  (e: 'show-modes'): void,
 }>()
 
 onMounted(() => {
@@ -102,6 +104,8 @@ watch(() => props.imageData, () => {
         @camera-change="onCameraChange"
         @camera-capture="onCameraCapture"
         @remove-picture="onRemovePicture"
+        @show-info="() => {emits('show-info')}"
+        @show-modes="() => {emits('show-modes')}"
     />
     <Modal
         :visible="cameraLoading"

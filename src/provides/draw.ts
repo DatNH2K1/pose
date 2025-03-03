@@ -1,7 +1,7 @@
 import {reactive, watch, provide, inject} from "vue";
 import {drawGrid, drawCountdown} from "@/provides/actions/draw.ts";
 import {Option, Resolution} from "@/definitions/types.ts";
-import {useI18n} from "vue-i18n";
+import {translate} from "@/plugins/i18n.ts";
 
 interface DrawStore {
     state: {
@@ -34,8 +34,6 @@ export const timerValues = [0, 5, 10, 15];
 
 // Define state, mutations, and actions
 export const createDrawStore = (): DrawStore => {
-    const {t} = useI18n();
-
     // State
     const state = reactive({
         gridValue: 0,
@@ -44,14 +42,14 @@ export const createDrawStore = (): DrawStore => {
         timeCounter: 0,
         gridValueOptions: gridValues.map(item => {
             return {
-                label: item === 0 ? t('label.off') : (item + " x " + item),
+                label: item === 0 ? translate('label.off') : (item + " x " + item),
                 value: item,
                 selected: item === 0
             }
         }),
         timerValueOptions: timerValues.map(item => {
             return {
-                label: item === 0 ? t('label.off') : (item + " s"),
+                label: item === 0 ? translate('label.off') : (item + " s"),
                 value: item,
                 selected: item === 0
             }
@@ -66,7 +64,7 @@ export const createDrawStore = (): DrawStore => {
     watch(() => state.gridValue, (value) => {
         state.gridValueOptions = gridValues.map(item => {
             return {
-                label: item === 0 ? t('label.off') : (item + " x " + item),
+                label: item === 0 ? translate('label.off') : (item + " x " + item),
                 value: item,
                 selected: item === value
             }
@@ -76,7 +74,7 @@ export const createDrawStore = (): DrawStore => {
     watch(() => state.timer, (value) => {
         state.timerValueOptions = timerValues.map(item => {
             return {
-                label: item === 0 ? t('label.off') : (item + " s"),
+                label: item === 0 ? translate('label.off') : (item + " s"),
                     value: item,
                 selected: item === value
             }

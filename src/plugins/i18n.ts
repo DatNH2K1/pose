@@ -14,3 +14,7 @@ const i18n = createI18n({
 })
 
 export default i18n;
+
+export function translate(key: string) {
+    return i18n.global.t(key);
+}

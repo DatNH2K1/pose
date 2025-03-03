@@ -3,9 +3,11 @@
     @apply justify-center items-center;
     height: 95%;
     width: 95%;
+    background: var(--bg-color);
 
     &__item {
-      @apply flex flex-col justify-center items-center w-20 h-20 text-white;
+      @apply flex flex-col justify-center items-center w-20 h-20;
+      color: var(--text-color);
 
       &--active {
         @apply text-blue-600;
