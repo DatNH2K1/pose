@@ -1,5 +1,6 @@
 import {NotificationStore} from "modable";
 import {Pose} from "@/definitions/enums.ts";
+import {Keypoint} from "@tensorflow-models/posenet";
 
 export type Notification = typeof NotificationStore;
 
@@ -32,6 +33,7 @@ export type DetailedPoseSetting = BasePoseSetting & {
 export type PoseData = {
     pose: Pose,
     imageData: ImageData,
+    keypoints?: Keypoint[]
 }
 
 export type ModeSetting = {

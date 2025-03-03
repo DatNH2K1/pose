@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import Camera from "@/components/Organisms/Camera/Camera.vue";
 import Config from "@/plugins/config.ts";
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import Gallery from "@/components/Atoms/Gallery/Gallery.vue";
 import {Pose} from "@/definitions/enums.ts";
 import {ImageData, PoseData} from "@/definitions/types.ts";
 import {ModalPosition} from "modable";
 import Modal from "@/components/Atoms/Modal/Modal.vue";
+import {analysePoseImage} from "@/utils/models/posenet.ts";
 
 const config = Config.getConfiguration()
 
+const isShowLoading = ref(false);
 const isShowGallery = ref(false);
 const isShowInfo = ref(false);
 const currentPose = ref(config.poses[0].type);
@@ -33,11 +35,22 @@ const nextStep = () => {
   }, 1000);
 }
 
-const onCapture = (pose: Pose, imageData: ImageData) => {
+const onCapture = async (pose: Pose, imageData: ImageData) => {
+  isShowLoading.value = true;
+
+  const image = new Image()
+  image.width = imageData.width;
+  image.height = imageData.height;
+  image.src = imageData.imageUrl;
+  const keypoints = await analysePoseImage(image);
+
   images.value[pose] = {
     pose,
-    imageData
+    imageData,
+    keypoints
   };
+
+  isShowLoading.value = false;
 
   nextStep()
 };
@@ -50,12 +63,22 @@ const onLoadData = (pose: Pose) => {
   currentPose.value = pose
   isShowGallery.value = false
 }
+
+watch(
+    () => images.value,
+    (newValue) => {
+      console.log('[Images] Updated:', newValue);
+    },
+    { deep: true }
+);
+
 </script>
 
 <template>
   <Camera
       :pose="currentPose"
       :image-data="images[currentPose] ? images[currentPose].imageData : undefined"
+      :is-loading="isShowLoading"
       @show-poses="() => {isShowGallery = true}"
       @show-info="() => {isShowInfo = true}"
       @camera-capture="onCapture"
@@ -76,8 +99,8 @@ const onLoadData = (pose: Pose) => {
       @clicked-outside="() => {isShowInfo = false}"
   >
     <div class="p-5 rounded bg-white min-w-60 max-w-screen-sm">
-      <h4 class="text-center font-bold">{{ $t(currentSetting?.label) }}</h4>
-      <div class="text-center w-full">{{ $t(currentSetting?.description) }}</div>
+      <h4 class="text-center font-bold">{{ $t(currentSetting?.label ?? '') }}</h4>
+      <div class="text-center w-full">{{ $t(currentSetting?.description ?? '') }}</div>
     </div>
   </Modal>
 </template>

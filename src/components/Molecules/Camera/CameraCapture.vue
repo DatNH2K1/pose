@@ -62,8 +62,6 @@ const setupCamera = async (mode: string | null = null, options : Resolution | nu
     }
   }
 
-  console.log('[Video Option]', videoOption.value)
-
   if (!video.value || !overlay.value) {
     console.error('Missing video capture element');
     return;

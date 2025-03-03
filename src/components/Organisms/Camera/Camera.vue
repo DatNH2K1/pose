@@ -14,6 +14,7 @@ const props = withDefaults(defineProps<CameraProps>(), {
   pose: undefined,
   imageData: undefined,
   autoStopCamera: false,
+  isLoading: false
 });
 
 const { width, height } = useWindowSize();
@@ -115,7 +116,7 @@ watch([
         @show-poses="() => {emits('show-poses')}"
     />
     <Modal
-        :visible="cameraLoading"
+        :visible="cameraLoading || isLoading"
         :position="ModalPosition.CENTER"
     >
       <div class="spinner-border animate-spin inline-block w-16 h-16 border-4 border-t-transparent border-blue-600 rounded-full"></div>

@@ -5,6 +5,7 @@ export type CameraProps = {
     pose?: Pose,
     imageData?: ImageData;
     autoStopCamera?: boolean,
+    isLoading?: boolean
 };
 
 export type CameraActionsProps = {
