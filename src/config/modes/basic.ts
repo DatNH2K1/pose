@@ -1,28 +1,29 @@
-import {ModeSetting, BasePoseSetting, DetailedPoseSetting} from "@/definitions/types.ts";
+import {BasePoseSetting, DetailedPoseSetting, ModeSetting} from "@/definitions/types.ts";
 import {translate} from "@/plugins/i18n.ts";
+import {Pose} from "@/definitions/enums.ts";
 
 const frontSetting: BasePoseSetting = {
-    type: 'front',
+    type: Pose.FRONT,
 }
 
 const leftSideSetting: BasePoseSetting = {
-    type: 'leftSide',
+    type: Pose.LEFT_SIDE,
 }
 
 const rightSideSetting: BasePoseSetting = {
-    type: 'rightSide',
+    type: Pose.RIGHT_SIDE,
 }
 
 const leftSitSetting: BasePoseSetting = {
-    type: 'leftSit',
+    type: Pose.LEFT_SIT,
 }
 
 const rightSitSetting: BasePoseSetting = {
-    type: 'rightSit',
+    type: Pose.RIGHT_SIT,
 }
 
 const backSetting: BasePoseSetting = {
-    type: 'back'
+    type: Pose.BACK
 }
 
 const config: ModeSetting = {

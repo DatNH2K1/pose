@@ -1,0 +1,34 @@
+.gallery {
+  @apply p-5 rounded font-bold;
+  background: var(--bg-color-2);
+  box-shadow: var(--bg-color);
+  color: var(--text-color);
+
+  &__content {
+    @apply flex gap-4;
+    width: 50vw;
+    max-height: 80vh;
+  }
+
+  &__list {
+    @apply flex flex-col gap-4 flex-1 overflow-auto;
+  }
+
+  &__item {
+    @apply border rounded p-2 text-center select-none text-nowrap;
+    min-width: 40%;
+
+    &:hover, &--active {
+      color: var(--active-color);
+      border-color: var(--active-color);
+    }
+
+    &--label {
+      @apply flex-1;
+    }
+
+    &--detail {
+      @apply w-1/3 flex justify-center items-center flex-col;
+    }
+  }
+}

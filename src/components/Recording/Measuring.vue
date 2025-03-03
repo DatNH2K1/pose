@@ -1,29 +1,59 @@
 <script setup lang="ts">
 import Camera from "@/components/Organisms/Camera/Camera.vue";
 import Config from "@/plugins/config.ts";
-import Modal from "@/components/Atoms/Modal/Modal.vue";
-import {ModalPosition} from "modable";
 import {ref} from "vue";
+import Gallery from "@/components/Atoms/Gallery/Gallery.vue";
+import {Pose} from "@/definitions/enums.ts";
+import {ImageData, PoseData} from "@/definitions/types.ts";
 
 const config = Config.getConfiguration()
 
-const isShowModes = ref(false);
+const isShowGallery = ref(false);
+const currentPose = ref(config.poses[0].type);
+const images = ref<Record<string, PoseData>>({});
 
-console.log('[Config]', config);
+const nextStep = () => {
+  const completePoses = Object.keys(images.value) as Pose[];
+  const poses = (config.poses.map(item => item.type).filter(item => !completePoses.includes(item))) as Pose[];
+
+  if (poses.length) {
+    currentPose.value = poses[0] as Pose
+  }
+}
+
+const onCapture = (pose: Pose, imageData: ImageData) => {
+  images.value[pose] = {
+    pose,
+    imageData
+  };
+
+  nextStep()
+};
+
+const onRemovePicture = (pose: Pose) => {
+  delete images.value[pose];
+}
+
+const onLoadData = (pose: Pose) => {
+  currentPose.value = pose
+  isShowGallery.value = false
+}
 </script>
 
 <template>
   <Camera
-    @showModes="() => {isShowModes = true}"
+      :pose="currentPose"
+      :image-data="images[currentPose] ? images[currentPose].imageData : undefined"
+      @showPoses="() => {isShowGallery = true}"
+      @camera-capture="onCapture"
+      @remove-picture="onRemovePicture"
   />
-  <Modal
-      :visible="isShowModes"
-      :position="ModalPosition.CENTER"
-      :transaction="'bounce'"
-      @clicked-outside="() => {isShowModes = false}"
-  >
-    <div>
-
-    </div>
-  </Modal>
+  <Gallery
+      :pose="currentPose"
+      :isVisible="isShowGallery"
+      :poses="config.poses"
+      :image-data="images"
+      @clicked-outside="() => {isShowGallery = false}"
+      @load-data="onLoadData"
+  />
 </template>

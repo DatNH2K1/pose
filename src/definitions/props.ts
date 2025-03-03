@@ -1,8 +1,8 @@
-import {Mode, Side} from "@/definitions/enums.ts";
-import {ImageData} from "@/definitions/types.ts";
+import {Pose, Side} from "@/definitions/enums.ts";
+import {DetailedPoseSetting, ImageData, PoseData} from "@/definitions/types.ts";
 
 export type CameraProps = {
-    mode?: Mode,
+    pose?: Pose,
     imageData?: ImageData;
     autoStopCamera?: boolean,
 };
@@ -20,4 +20,11 @@ export type CameraCaptureProps = {
 export type CameraPreviewProps = {
     src: string | undefined,
     alt: string
+}
+
+export type GalleryProps = {
+    pose: Pose,
+    isVisible: boolean,
+    poses: DetailedPoseSetting[],
+    imageData: Record<string, PoseData>
 }

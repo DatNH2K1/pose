@@ -23,7 +23,7 @@ const emits = defineEmits<{
   (e: 'camera-capture'): void;
   (e: 'remove-picture'): void;
   (e: 'show-info'): void;
-  (e: 'show-modes'): void;
+  (e: 'show-poses'): void;
 }>();
 
 const {
@@ -54,8 +54,8 @@ const showInfo = () => {
   emits('show-info');
 }
 
-const showModes = () => {
-  emits('show-modes');
+const showPoses = () => {
+  emits('show-poses');
 }
 
 const mainButtons = computed(() => {
@@ -66,7 +66,7 @@ const mainButtons = computed(() => {
       hide: false,
     },
     {
-      click: showModes,
+      click: showPoses,
       icon: 'fas fa-images',
       hide: false,
     },

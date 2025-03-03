@@ -1,3 +1,4 @@
+@use "variable";
 @use "keyframes";
 @use "animation";
 @use "modable/index" as modable;
@@ -18,4 +19,14 @@
 html, body {
   scrollbar-width: none;
   -ms-overflow-style: none;
+}
+
+@layer utilities {
+  .scrollbar-none::-webkit-scrollbar {
+    display: none !important;
+  }
+  .scrollbar-none {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
 }

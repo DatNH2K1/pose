@@ -1,4 +1,5 @@
 import {NotificationStore} from "modable";
+import {Pose} from "@/definitions/enums.ts";
 
 export type Notification = typeof NotificationStore;
 
@@ -20,11 +21,16 @@ export type Option<T> = {
 }
 
 export type BasePoseSetting = {
-    type: string,
+    type: Pose,
 }
 
 export type DetailedPoseSetting = BasePoseSetting & {
     label: string,
+}
+
+export type PoseData = {
+    pose: Pose,
+    imageData: ImageData,
 }
 
 export type ModeSetting = {

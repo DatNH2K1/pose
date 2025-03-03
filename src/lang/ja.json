@@ -1,6 +1,27 @@
 {
   "label": {
     "off": "OFF",
-    "none": "None"
+    "none": "None",
+    "gallery": "Gallery"
+  },
+  "pose": {
+    "front": {
+      "label": "Front"
+    },
+    "leftSide": {
+      "label": "Left Side"
+    },
+    "rightSide": {
+      "label": "Right Side"
+    },
+    "leftSit": {
+      "label": "Left Sit"
+    },
+    "rightSit": {
+      "label": "Right Sit"
+    },
+    "back": {
+      "label": "Back"
+    }
   }
 }
