@@ -59,9 +59,11 @@ const onRemovePicture = (pose: Pose) => {
   delete images.value[pose];
 }
 
-const onLoadData = (pose: Pose) => {
-  currentPose.value = pose
-  isShowGallery.value = false
+const onLoadData = (pose?: Pose) => {
+  if (pose) {
+    currentPose.value = pose
+    isShowGallery.value = false
+  }
 }
 
 watch(

@@ -10,7 +10,7 @@ const props = defineProps<GalleryProps>();
 
 const emits = defineEmits<{
   (e: 'clicked-outside'): void;
-  (e: 'load-data', pose: Pose): void;
+  (e: 'load-data', pose?: Pose): void;
 }>();
 
 const {width, height} = useWindowSize();
@@ -39,7 +39,7 @@ const selectPose = (pose: Pose) => {
 }
 
 const loadPoseData = () => {
-  emits('load-data', currentSetting.value.type)
+  emits('load-data', currentSetting.value?.type)
 }
 </script>
 
@@ -61,7 +61,7 @@ const loadPoseData = () => {
             :class="isHorizontal ? '' : 'w-full'"
             @click="loadPoseData"
         >
-          {{ $t(currentSetting?.label) }}
+          {{ $t(currentSetting?.label ?? '') }}
           <img
               v-if="currentData"
               alt="Pose Data"
